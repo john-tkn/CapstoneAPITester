@@ -46,6 +46,7 @@ public class App {
         apiTests.createUser();
         
         apiTests.loginToUser();
+        apiTests.verifyUser();
         
         apiTests.addTransaction();
         apiTests.fetchTransaction();

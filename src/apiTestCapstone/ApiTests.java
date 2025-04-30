@@ -95,22 +95,13 @@ public class ApiTests {
 			if (DEBUG) {
 				System.out.printf("DEBUG: %s: %s", response.statusCode(), response.body());
 			}
-			if(response.statusCode() == 200) {
-			try {
-				JSONObject jsonResponse = new JSONObject(response.body());
-				jWTtokenString = jsonResponse.getString("jwt");
-				userId = jsonResponse.getInt("id");
-				if (jWTtokenString != null || jWTtokenString != "") {
+			if(response.statusCode() == 202) {
 					System.out.printf(" PASSED ");
 				} else {
 					System.out.printf(" FAILED %s" + response.statusCode());
 				}
-			} catch (Exception e) {
-				System.out.printf(" FAILED Exception:%s %s: %s", e, response.statusCode(), response.body());
-			}
-			} else {
-				System.out.printf(" FAILED %s: %s", response.statusCode(), response.body());
-			}
+
+
 
 		} catch (Exception e) {
 			System.out.printf(" FAILED " + e.getMessage());
@@ -136,7 +127,7 @@ public class ApiTests {
 
 		String jsonData = json.toString();
 		HttpClient client = HttpClient.newHttpClient();
-		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseURLString + "/api/auth/login"))
+		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseURLString + "/api/auth/verify"))
 				.header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(jsonData)).build();
 		HttpResponse<String> response;
 		try {
