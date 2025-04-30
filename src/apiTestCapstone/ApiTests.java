@@ -1,6 +1,5 @@
 package apiTestCapstone;
 
-import java.io.IOException;
 import java.lang.module.ModuleDescriptor.Builder;
 import java.net.URI;
 import java.net.http.*;
@@ -8,24 +7,26 @@ import java.net.http.HttpResponse.BodyHandlers;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.UUID;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+
 public class ApiTests {
 
-	private final String USERNAME = "TEST";
-	private final String PASSWORD = "TEST";
+	private final String USERNAME = "test";
+	private final String PASSWORD = "test";
 	private String fNameString;
 	private String lNameString;
-	private final String EMAIL = "TEST@TEST.COM";
+	private String EMAIL;
 
 	private boolean DEBUG = false;
 
 	private String jWTtokenString;
 	private int userId;
-
+	
 	private String tranDesc;
 	private String tranAmount;
 	private String tranCat;
@@ -77,10 +78,56 @@ public class ApiTests {
 
 	public void loginToUser() {
 		System.out.printf("Test Case 1.2 (login user) ");
-		String jsonData = "{ \"email\": \"" + EMAIL + "\", \"password\": \"" + PASSWORD + "\" }";
+		//String jsonData = "{ \"email\": \"" + EMAIL + "\", \"password\": \"" + PASSWORD + "\" }";
+		JSONObject json = new JSONObject();
+		json.put("email", EMAIL);  // or just userId if it's a String or UUID
+		json.put("password", PASSWORD);
+		json.put("rememberMe", false);
 
+
+		String jsonData = json.toString();
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseURLString + "/api/auth/login"))
+				.header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(jsonData)).build();
+		HttpResponse<String> response;
+		try {
+			response = client.send(request, BodyHandlers.ofString());
+			if (DEBUG) {
+				System.out.printf("DEBUG: %s: %s", response.statusCode(), response.body());
+			}
+			if(response.statusCode() == 202) {
+					System.out.printf(" PASSED ");
+				} else {
+					System.out.printf(" FAILED %s" + response.statusCode());
+				}
+
+
+
+		} catch (Exception e) {
+			System.out.printf(" FAILED " + e.getMessage());
+		}
+		System.out.printf("\n");
+	}
+	
+	public void verifyUser() {
+		System.out.printf("Test Case 1.3 (verify user OTP) ");
+
+		
+		Scanner scanner = new Scanner(System.in);
+		System.out.print("OPERATOR!! PLEASE ENTER THE OTP CODE SENT TO EMAIL: ");
+		String ONETIMECODE = scanner.nextLine();
+		
+		
+		//String jsonData = "{ \"email\": \"" + EMAIL + "\", \"password\": \"" + PASSWORD + "\" }";
+		JSONObject json = new JSONObject();
+		json.put("email", EMAIL);  // or just userId if it's a String or UUID
+		json.put("password", PASSWORD);
+		json.put("oneTimeCode", ONETIMECODE);
+
+
+		String jsonData = json.toString();
+		HttpClient client = HttpClient.newHttpClient();
+		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(baseURLString + "/api/auth/verify"))
 				.header("Content-Type", "application/json").POST(HttpRequest.BodyPublishers.ofString(jsonData)).build();
 		HttpResponse<String> response;
 		try {
@@ -110,6 +157,8 @@ public class ApiTests {
 		}
 		System.out.printf("\n");
 	}
+	
+	
 
 	public void addTransaction() {
 		System.out.printf("Test Case 2.1 (add Transaction to user) ");
@@ -378,6 +427,20 @@ public class ApiTests {
 	 */
 	public void setBaseURLString(String baseURLString) {
 		this.baseURLString = baseURLString;
+	}
+
+	/**
+	 * @return the eMAIL
+	 */
+	public String getEMAIL() {
+		return EMAIL;
+	}
+
+	/**
+	 * @param eMAIL the eMAIL to set
+	 */
+	public void setEMAIL(String eMAIL) {
+		EMAIL = eMAIL;
 	}
 
 

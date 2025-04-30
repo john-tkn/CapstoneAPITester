@@ -18,8 +18,15 @@ public class App {
 		}
 		ApiTests apiTests = new ApiTests();
 		
-		if(args.length == 2) {
-			if(args[1].equals("debug")) {
+		
+		if(args.length < 2) {
+			System.out.println("A USER EMAIL IS REQUIRED");
+			return;
+		}
+		
+		
+		if(args.length == 3) {
+			if(args[2].equals("debug")) {
 				apiTests.setDEBUG(true);
 			}
 		}
@@ -33,12 +40,13 @@ public class App {
           // Create an instance of ApiTests
         
         apiTests.setBaseURLString(args[0]);
-        
+        apiTests.setEMAIL(args[1]);
         //
         
         apiTests.createUser();
         
         apiTests.loginToUser();
+        apiTests.verifyUser();
         
         apiTests.addTransaction();
         apiTests.fetchTransaction();
@@ -46,7 +54,7 @@ public class App {
         apiTests.deleteTransaction();
         
         apiTests.addCategory();
-        
+       
         apiTests.fetchCategory();
         
         apiTests.deleteCategory();
